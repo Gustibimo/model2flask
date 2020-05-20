@@ -12,6 +12,10 @@ model_classification = model['pipeline_clf']
 def hello_world():
     return 'Sentiment analysis API!'
 
+@app.route('/upload')
+def upload_file():
+    return 'TODO'
+
 @app.route('/api', methods=['POST'])
 def predict():
     data = request.get_json(force=True)
@@ -21,4 +25,4 @@ def predict():
     return jsonify(output_text, output)
 
 if __name__ == '__main__':
-    app.run(port=5000, debug=True)
+    app.run(host="localhost", port=3000, debug=True)

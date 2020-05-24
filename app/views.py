@@ -12,12 +12,12 @@ def hello_world():
     return 'Sentiment analysis API!'
 
 api.config["IMAGE_UPLOADS"] = "/home/safia/workspaces/labs/datasci/model2flask/app/static/uploads"
+
 #TODO: upload test data to determine class output
 @api.route('/upload', methods= ['GET', 'POST'])
 def upload_file():
     if request.method == "POST":
         if request.files:
-            print(request.cookies)
             image = request.files["image"]
 
             if image.filename == "":
@@ -25,20 +25,20 @@ def upload_file():
                 return redirect(request.url)
             image.save(os.path.join(api.config["IMAGE_UPLOADS"], image.filename))
 
-            print(image)
             return redirect(request.url)
 
     return render_template('upload.html')
+
+api.config["MODEL_UPLOADS"] = "/home/safia/workspaces/labs/datasci/model2flask/models"
 
 @api.route("/uploader", methods=["GET", "POST"])
 def upload_model():
     if request.method == "POST":
         filesize = request.cookies.get("filesize")
         file = request.files["file"]
+        file.save(os.path.join(api.config["MODEL_UPLOADS"], file.filename))
 
         print(f"filesize: {filesize}")
-        print(file)
-
         res = make_response(jsonify({"message": f"{file.filename} uploaded"}), 200)
 
         return res

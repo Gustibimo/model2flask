@@ -2,6 +2,9 @@ from flask import Flask, request, jsonify, render_template, redirect, make_respo
 import numpy as np
 import joblib
 import os
+
+from flask_restful import reqparse
+
 from app import api
 
 model = joblib.load(open('models/pipe_clf_checkpoint.joblib', 'rb'))
@@ -44,10 +47,32 @@ def upload_model():
         return res
     return render_template("/upload_model.html")
 
-@api.route('/api', methods=['POST'])
-def predict():
-    data = request.get_json(force=True)
-    sentiment_pred = model_classification.predict(data["input"])
-    output_text = "Text: " + str(data["input"])
-    output = "Prediction: " + str(sentiment_pred)
-    return jsonify(output_text, output)
+@api.route('/api/v1/sentiment', methods=['GET','POST'])
+def prediction():
+
+    if request.method == 'POST':
+        data = request.get_json(force=True)
+        sentiment_pred = model_classification.predict(data["input"])
+        output_text = "Text: " + str(data["input"])
+        output = "Prediction: " + str(sentiment_pred)
+        label= list()
+        for s in sentiment_pred:
+            if s == 0:
+                label.append("Negative")
+            else:
+                label.append("Positive")
+        output_label = "Label: " + str(label)
+        return jsonify(output_text, output, output_label)
+    if request.method == 'GET':
+        args = list()
+        args.append(request.args.get("text"))
+        sen = model_classification.predict(args)
+        get_label = list()
+        for s in sen:
+            if s == 0:
+                get_label.append("Negative")
+            else:
+                get_label.append("Positive")
+        output_labels = "Label: " + str(get_label)
+
+        return jsonify(str(output_labels))

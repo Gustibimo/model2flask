@@ -11,6 +11,7 @@ mMchine learning model deployment using Flask
 
 - `api/v1/sentiment`
 - `api/v1/imgcaption`
+- `/uploader`
 
 # Prerequisite
 
